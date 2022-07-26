@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2bfcda21a49b0d226406dbae438c18ab881c23dec9b38b927acea15513616213"
+            "sha256": "bc7eeca03dfd6264fc7c4cf48eda10a6ca4102f29f9bddee33c07e18880da1d2"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.10"
+            "python_version": "3.9"
         },
         "sources": [
             {
@@ -221,6 +221,14 @@
             ],
             "index": "pypi",
             "version": "==3.13.0"
+        },
+        "django-countries": {
+            "hashes": [
+                "sha256:0df6d34193667c2343da8935cbfb8a2bd4fb0c97baf01ac10db4628ba1557a82",
+                "sha256:27fc8a0f66a87c9d839493f3926b4e0f4dd873ef66465aa8cd3e953f99758cc9"
+            ],
+            "index": "pypi",
+            "version": "==7.3.2"
         },
         "django-environ": {
             "hashes": [
@@ -651,7 +659,7 @@
                 "sha256:1c5bebdf19d5051e2e1de6cf70adfc5948d47221f097fcff7a3ffc91e953eaf5",
                 "sha256:61901f81ff4017951119cd0d1ed9b7af31c821d6845c8c477587bbdcd5e5854e"
             ],
-            "markers": "python_version >= '3.6' and python_version < '4.0'",
+            "markers": "python_version >= '3.6' and python_version < '4'",
             "version": "==0.11.1"
         },
         "typed-ast": {
@@ -689,16 +697,16 @@
                 "sha256:25642c956049920a5aa49edcdd6ab1e06d7e5d467fc00e0506c44ac86fbfca02",
                 "sha256:e6d2677a32f47fc7eb2795db1dd15c1f34eff616bcaf2cfb5e997f854fa1c4a6"
             ],
-            "markers": "python_version < '3.10'",
+            "markers": "python_version >= '3.7'",
             "version": "==4.3.0"
         },
         "urllib3": {
             "hashes": [
-                "sha256:8298d6d56d39be0e3bc13c1c97d133f9b45d797169a0e11cdd0e0489d786f7ec",
-                "sha256:879ba4d1e89654d9769ce13121e0f94310ea32e8d2f8cf587b77c08bbcdb30d6"
+                "sha256:c33ccba33c819596124764c23a97d25f32b28433ba0dedeb77d873a38722c9bc",
+                "sha256:ea6e8fb210b19d950fab93b60c9009226c63a28808bc8386e05301e25883ac0a"
             ],
             "index": "pypi",
-            "version": "==1.26.10"
+            "version": "==1.26.11"
         },
         "uuid": {
             "hashes": [

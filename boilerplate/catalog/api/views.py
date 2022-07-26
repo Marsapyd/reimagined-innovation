@@ -60,6 +60,8 @@ class PaymentView(CreateAPIView):
         order.ordered = True
         order.payment = payment
         order.save()
+
+        #TODO:
         return Response({"data": result})
 
 
@@ -99,6 +101,14 @@ def acme_webhook(request):
         received_at=timezone.now(),
         payload=payload,
     )
+
+    #TODO: order complete
+    # Get acct number and match it to user.get_name, 
+    # then send email saying, thanks we have received {}, {} left
+        # order.obj.filter for first order that matches user && order = false
+        # payment.status = closed
+        # If amt left =0, order closed
+        # Possible hyperlink in e-mail to route to refund view
     process_webhook_payload(payload)
     return HttpResponse("Message received okay.", content_type="text/plain")
 
@@ -211,3 +221,13 @@ class CouponView(CreateAPIView):
                 return Response({"success": False, "error": "Invalid coupon code"})
         except ObjectDoesNotExist:
             return Response({"success": False, "error": "You do not have an active order"})
+
+
+#TODO: Create refund view
+# Call issue_refund. 
+# Send refund processed email inputting in some users details
+# Order gets closed as well
+
+
+# https://stackoverflow.com/questions/18619577/using-django-admin-actions-to-send-bulk-emails
+# 

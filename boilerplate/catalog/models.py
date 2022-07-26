@@ -161,7 +161,7 @@ class AcmeWebhookMessage(models.Model):
 
 class BankAccount(models.Model):
     balance = MoneyField(max_digits=10, decimal_places=2,
-                         default_currency='USD')
+                         default_currency='USD',null=True, blank=True)
     account_iban_number = IBANField(null=True, blank=True)
     account_swift_bic = BICField(null=True, blank=True)
     metadata = models.JSONField(default=dict, null=True)
