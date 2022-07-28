@@ -9,102 +9,49 @@ import {
   Menu,
   Segment
 } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../store/actions/auth';
+import Navbar from '../components/Navbar';
+import FooterSection from '../assets/images/Footer.png';
 
-const CustomLayout = ({ children }) => {
-  const authenticated = useSelector(state => state.auth.token !== null);
-  const dispatch = useDispatch();
-  return (
-    <div>
-      <Menu fixed="top" inverted>
-        <Container>
-          <Link to="/">
-            <Menu.Item header>Home</Menu.Item>
-          </Link>
-          {authenticated ? (
-            <Menu.Item header onClick={() => dispatch(logout())}>
-              Logout
-            </Menu.Item>
-          ) : (
-            <>
-              <Link to="/login">
-                <Menu.Item header>Login</Menu.Item>
-              </Link>
-              <Link to="/signup">
-                <Menu.Item header>Signup</Menu.Item>
-              </Link>
-            </>
-          )}
-        </Container>
-      </Menu>
-
+const CustomLayout = ({ children }) => (
+  <div className="bg-black">
+    <Menu fixed="top" inverted>
+      <Container>
+        <Navbar />
+      </Container>
+    </Menu>
+    <Segment style={{ padding: '2em 0em', backgroundColor: 'black' }} vertical>
       {children}
+    </Segment>
 
-      <Segment
-        inverted
-        vertical
-        style={{ margin: '5em 0em 0em', padding: '5em 0em' }}
-      >
-        <Container textAlign="center">
-          <Grid divided inverted stackable>
-            <Grid.Column width={3}>
-              <Header inverted as="h4" content="Group 1" />
-              <List link inverted>
-                <List.Item as="a">Link One</List.Item>
-                <List.Item as="a">Link Two</List.Item>
-                <List.Item as="a">Link Three</List.Item>
-                <List.Item as="a">Link Four</List.Item>
-              </List>
-            </Grid.Column>
-            <Grid.Column width={3}>
-              <Header inverted as="h4" content="Group 2" />
-              <List link inverted>
-                <List.Item as="a">Link One</List.Item>
-                <List.Item as="a">Link Two</List.Item>
-                <List.Item as="a">Link Three</List.Item>
-                <List.Item as="a">Link Four</List.Item>
-              </List>
-            </Grid.Column>
-            <Grid.Column width={3}>
-              <Header inverted as="h4" content="Group 3" />
-              <List link inverted>
-                <List.Item as="a">Link One</List.Item>
-                <List.Item as="a">Link Two</List.Item>
-                <List.Item as="a">Link Three</List.Item>
-                <List.Item as="a">Link Four</List.Item>
-              </List>
-            </Grid.Column>
-            <Grid.Column width={7}>
-              <Header inverted as="h4" content="Footer Header" />
-              <p>
-                Extra space for a call to action inside the footer that could
-                help re-engage users.
-              </p>
-            </Grid.Column>
-          </Grid>
-
-          <Divider inverted section />
-          <List horizontal inverted divided link size="small">
-            <List.Item as="a" href="#">
-              Site Map
-            </List.Item>
-            <List.Item as="a" href="#">
-              Contact Us
-            </List.Item>
-            <List.Item as="a" href="#">
-              Terms and Conditions
-            </List.Item>
-            <List.Item as="a" href="#">
-              Privacy Policy
-            </List.Item>
-          </List>
-        </Container>
-      </Segment>
-    </div>
-  );
-};
+    <Segment inverted vertical>
+      <Grid divided inverted stackable style={{ marginBottom: '1em' }}>
+        <img
+          src={FooterSection}
+          alt="footer-musk"
+          className="
+          bg-cover
+          bg-center"
+        />
+      </Grid>
+      <Container textAlign="center">
+        <List horizontal inverted divided link size="small">
+          <List.Item as="a" href="#">
+            &copy; {new Date().getFullYear()} Copyright
+          </List.Item>
+          <List.Item as="a" href="#">
+            Contact Us
+          </List.Item>
+          <List.Item as="a" href="#">
+            Terms and Conditions
+          </List.Item>
+          <List.Item as="a" href="#">
+            Privacy Policy
+          </List.Item>
+        </List>
+      </Container>
+    </Segment>
+  </div>
+);
 
 CustomLayout.propTypes = {
   children: PropTypes.node.isRequired

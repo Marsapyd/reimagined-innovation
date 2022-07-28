@@ -36,7 +36,21 @@
         "react-scripts": "^3.0.1",
         "sass": "^1.54.0",
         "semantic-ui-css": "^2.4.1",
-        "semantic-ui-react": "^0.87.2"
+        "semantic-ui-react": "^0.87.2",
+        "dayjs": "^1.11.4",
+        "formik": "^2.2.9",
+        "react-material-ui-carousel": "^3.4.2",
+        "react-select": "^5.4.0",
+        "react-select-country-list": "^2.2.3",
+        "styled-components": "^5.3.5",
+        "web-vitals": "^2.1.4",
+        "yup": "^0.32.11",
+        "@emotion/styled": "^11.9.3",
+        "@mui/icons-material": "^5.8.4",
+        "@mui/material": "^5.9.0",
+        "@testing-library/jest-dom": "^5.16.4",
+        "@testing-library/react": "^13.3.0",
+        "@testing-library/user-event": "^13.5.0"
     },
     "devDependencies": {
         "@babel/core": "^7.18.9",

@@ -39,7 +39,7 @@ const RegistrationForm = () => {
         <Header as="h2" color="teal" textAlign="center">
           Signup to your account
         </Header>
-        <p>{error.message}</p>
+        <p>{error?.message}</p>
         <>
           <Form size="large" onSubmit={handleSubmit}>
             <Segment stacked>
