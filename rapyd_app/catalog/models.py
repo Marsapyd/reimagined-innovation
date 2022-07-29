@@ -90,14 +90,14 @@ class Order(models.Model):
     items = models.ManyToManyField(OrderItem)
     address = models.ForeignKey(
         "Address", on_delete=models.SET_NULL, blank=True, null=True, related_name="orders")
-    status = models.CharField(choices=STATUS, max_length=3)
-    payment = models.ForeignKey(
-        "Payment", on_delete=models.SET_NULL, blank=True, null=True, related_name="orders")
     coupon = models.ForeignKey(
         "Coupon", on_delete=models.SET_NULL, blank=True, null=True, related_name="orders")
     ordered = models.BooleanField(default=False)
     start_date = models.DateTimeField(auto_now_add=True)
     ordered_date = models.DateTimeField()
+
+    class Meta:
+        ordering = ['ordered_date']
 
     def __str__(self):
         return self.user.email
@@ -130,11 +130,13 @@ class Address(models.Model):
 
 class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    charge_id = models.CharField(blank=True, max_length=100)
     amount = MoneyField(default=0, default_currency='USD', max_digits=10)
+    charge_id = models.CharField(max_length=200, blank=True, null=True)
     status = models.CharField(choices=PAYMENT_STATUS, max_length=3)
     bank = models.ForeignKey("BankAccount", related_name="payments",
                              on_delete=models.SET_NULL, blank=True, null=True)
+    order = models.ForeignKey(
+        "Order", on_delete=models.SET_NULL, blank=True, null=True, related_name="payments")
 
 
 def __str__(self):
@@ -161,13 +163,15 @@ class AcmeWebhookMessage(models.Model):
 
 class BankAccount(models.Model):
     balance = MoneyField(max_digits=10, decimal_places=2,
-                         default_currency='USD')
+                         default_currency='USD',null=True, blank=True)
     account_iban_number = IBANField(null=True, blank=True)
     account_swift_bic = BICField(null=True, blank=True)
     metadata = models.JSONField(default=dict, null=True)
     account_name = models.CharField(max_length=200, default='Rapyd')
     country = CountryField(multiple=False)
     rapyd_iban_id = models.CharField(max_length=200, blank=True, default=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True, related_name="orders")
 
     class Meta:
         constraints = [

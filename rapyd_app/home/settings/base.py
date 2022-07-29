@@ -1,5 +1,6 @@
 import os
 import environ
+from datetime import timedelta
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()
@@ -29,8 +30,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'catalog',
     'djmoney',
-    'localflavor',
-    'djmoney.contrib.exchange',
+    'localflavor'
 ]
 
 MIDDLEWARE = [
@@ -45,7 +45,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'home.urls'
-
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -61,6 +64,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -78,14 +82,13 @@ REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'my-app-auth'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
 }
-
+IMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+}
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -95,10 +98,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = "ojosunday1410@gmail.com"
 EMAIL_HOST_PASSWORD = "dzjmrzspqyscntyt"
 EMAIL_PORT = 587
-AUTHENTICATION_BACKENDS = [
-    'allauth.account.auth_backends.AuthenticationBackend',
-    'django.contrib.auth.backends.ModelBackend',
-]
+
 
 SECRET_KEY = 'cf5b21d711aa406a84eb3d9d688559af'
 OPEN_EXCHANGE_API_KEY = env('OPEN_EXCHANGE_API_KEY')
@@ -108,3 +108,6 @@ RAPYD_API_URL = env('RAPYD_API_URL')
 COMPANY_NAME = env('COMPANY_NAME')
 EWALLET_ID = env('EWALLET_ID')
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+# REST_AUTH_SERIALIZERS = {
+#     'USER_DETAILS_SERIALIZER': 'catalog.api.serializers.UserSerializer'
+# }
