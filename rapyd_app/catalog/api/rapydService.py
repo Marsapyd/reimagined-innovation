@@ -16,6 +16,7 @@ from requests import Response
 from django.conf import settings
 import pycountry
 from catalog.models import BankAccount
+from django.contrib.auth.models import User
 
 
 class RapydService:
@@ -25,10 +26,10 @@ class RapydService:
         self.__base_rapid_api_key = settings.RAPYD_API_URL
         self.__COMPANY_NAME = settings.COMPANY_NAME
         self.__EWALLET_ID = settings.EWALLET_ID
+        self.adminUser = User.objects.get(username='admin')
 
     def issue_iban(self, country, currency):
-        country = pycountry.countries.get(name=country)
-        country_code = country.alpha_2
+        country_code = country
         body = {
             "currency": currency,
             "country": country_code,
@@ -43,29 +44,40 @@ class RapydService:
         if api_response.status_code != 200:
             RapydService._handle_response(api_response)
         data = api_response.json()["data"]
+        account_number = None
+        bank_data = data['bank_account']
+        if (bank_data.get('account_number', None)):
+            account_number = bank_data['account_number']
+        elif(bank_data.get('iban', None)):
+            account_number = bank_data['iban']
+        else:
+            raise Exception("No account number or iban found")
+        bic = None
+        if (bank_data.get('bic', None)):
+            bic = bank_data['bic']
         result = BankAccount(account_name=data["bank_account"]['beneficiary_name'],
-                             rapyd_iban_id=data['id'], account_iban_number=data['bank_account']['iban'], account_swift_bic=data['bank_account']['bic'], country=country, balance=0, balance_currency=currency, metadata=data)
-
+                             rapyd_iban_id=data['id'], account_iban_number=account_number, account_swift_bic=bic, country=country, balance=0, balance_currency=currency, metadata=data, user=self.adminUser)
         return (result, data)
         # create payment object with status created in view, update with isutran once ibanhistory is moved to moved and then leave as it is
 
-    def retrieve_iban_histrory(self, rapyd_iban_id, transaction_id=None):
-        if not transaction_id:
-            api_response = requests.post(
-                **self.__prepare_request('get', f'/v1/issuing/bankaccounts/{rapyd_iban_id}'))
-            if api_response.status_code != 200:
-                RapydService._handle_response(api_response)
-            data = api_response.json()["data"]
-            return data["transactions"][-1]
-        else:
-            api_response = requests.post(
-                **self.__prepare_request('get', f'/v1/issuing/bankaccounts/{rapyd_iban_id}/transactions/{transaction_id}'))
-            if api_response.status_code != 200:
-                RapydService._handle_response(api_response)
-            data = api_response.json()["data"]
-            return data
+    # def retrieve_iban_histrory(self, rapyd_iban_id, transaction_id=None):
+    #     if not transaction_id:
+    #         api_response = requests.post(
+    #             **self.__prepare_request('get', f'/v1/issuing/bankaccounts/{rapyd_iban_id}'))
+    #         if api_response.status_code != 200:
+    #             RapydService._handle_response(api_response)
+    #         data = api_response.json()["data"]
+    #         return data["transactions"][-1]
+    #     else:
+    #         api_response = requests.post(
+    #             **self.__prepare_request('get', f'/v1/issuing/bankaccounts/{rapyd_iban_id}/transactions/{transaction_id}'))
+    #         if api_response.status_code != 200:
+    #             RapydService._handle_response(api_response)
+    #         data = api_response.json()["data"]
+    #         return data
 
-    def issue_refund(self, sender, beneficiary, country, currency, payload):
+    def issue_refund(self, sender, beneficiary, country, currency, amount):
+
         country = pycountry.countries.get(name=country)
         country_code = country.alpha_2
         sender_body = sender | {
@@ -75,7 +87,7 @@ class RapydService:
         }
         payload_body = {
             "payout_method_type": f"{country_code.lower()}_general_bank",
-            "payout_amount": str(payload.amount),
+            "payout_amount": str(amount),
             "payout_currency": currency,
             "ewallet": self.__EWALLET_ID,
             "merchant_reference_id": self.__COMPANY_NAME,
@@ -94,6 +106,19 @@ class RapydService:
         if api_response.status_code != 200:
             RapydService._handle_response(api_response)
         data = api_response.json()
+        return data
+
+    def simulate_funds(self, currency, issued_bank_account, amount):
+        body = {
+            "issued_bank_account": issued_bank_account,
+            "amount": str(amount),
+            "currency": currency,
+        }
+        api_response = requests.post(
+            **self.__prepare_request('post', '/v1/issuing/bankaccounts/bankaccounttransfertobankaccount', body=body))
+        if api_response.status_code != 200:
+            RapydService._handle_response(api_response)
+        data = api_response.json()["data"]
         return data
 
     def auth_webhook_request(self, incomeSign, url, salt, timestamp, body) -> bool:
