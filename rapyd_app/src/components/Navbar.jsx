@@ -9,18 +9,29 @@ import {
   MenuItem,
   Divider
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import { AccountCircle } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import countryList from 'react-select-country-list';
+import ReactSelectMaterialUi from 'react-select-material-ui';
 import { logout } from '../store/actions/auth';
+import { getCountryUtil } from '../store/actions/auth';
 
 const Navbar = () => {
   const authenticated = useSelector(state => state.auth.token !== null);
+  const country = useSelector(state => state.auth.country);
   const dispatch = useDispatch();
-
   const [anchorEl, setAnchorEl] = useState();
+
+  const [value, setValue] = useState(country);
+  const options = useMemo(() => countryList().getLabelList(), []);
+
+  const changeHandler = countryAlpha => {
+    setValue(countryAlpha);
+    dispatch(getCountryUtil(countryAlpha));
+  };
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
@@ -64,6 +75,25 @@ const Navbar = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Touch the Sky
           </Typography>
+          <ReactSelectMaterialUi
+            placeholder={country}
+            InputLabelProps={{
+              sx: {
+                color: 'white'
+              }
+            }}
+            name="Countries"
+            options={options}
+            defaultValue="CA"
+            value={value}
+            className="bg-black text-black"
+            sx={{
+              backgroundColor: 'black',
+              color: 'green',
+              width: 60
+            }}
+            onChange={changeHandler}
+          />
 
           <Stack direction="row" spacing={1}>
             <Button color="inherit">
@@ -85,7 +115,7 @@ const Navbar = () => {
             </Button>
             <Button color="inherit">
               <NavLink
-                to="/order/1"
+                to="/order/mars-ticket"
                 style={({ isActive }) => (isActive ? activeStyle : planeStyle)}
               >
                 Book Space Tourism ticket

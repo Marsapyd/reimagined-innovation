@@ -6,6 +6,8 @@ import Signup from './containers/Signup';
 import HomepageLayout from './containers/Home';
 import About from './containers/AboutUs';
 import ContactUs from './containers/ContactUs';
+import Checkout from './components/Checkout';
+import BankData from './components/BankData';
 
 const BaseRouter = () => (
   <Hoc>
@@ -15,7 +17,10 @@ const BaseRouter = () => (
       <Route path="about" element={<About />} />
       <Route path="signup" element={<Signup />} />
       <Route path="contact" element={<ContactUs />} />
+      <Route path="checkout" element={<Checkout />} />
+      <Route path="payment" element={<BankData />} />
       <Route path="/order/:pk" element={<BookSpaceTravel />} />
+
       <Route element={HomepageLayout} />
     </Routes>
   </Hoc>

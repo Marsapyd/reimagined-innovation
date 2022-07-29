@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAllInfoByISO } from 'iso-country-currency';
 import * as actionTypes from "./actionTypes";
 
 export const authStart = () => ({
@@ -6,6 +7,10 @@ export const authStart = () => ({
 });
 
 export const authSuccess = token => ({
+    type: actionTypes.AUTH_SUCCESS,
+    token
+});
+export const get = token => ({
     type: actionTypes.AUTH_SUCCESS,
     token
 });
@@ -23,11 +28,13 @@ export const logout = () => {
     };
 };
 
+
 export const checkAuthTimeout = expirationTime => dispatch => {
     setTimeout(() => {
         dispatch(logout());
     }, expirationTime * 1000);
 };
+
 
 export const authLogin = (email, password) => dispatch => {
     dispatch(authStart());
@@ -39,6 +46,7 @@ export const authLogin = (email, password) => dispatch => {
         .then(res => {
             const token = res.data.access_token;
             const expirationDate = new Date(new Date().getTime() + 3600 * 1000);
+            console.log(token);
             localStorage.setItem("token", token);
             localStorage.setItem("expirationDate", expirationDate);
             dispatch(authSuccess(token));
@@ -48,7 +56,17 @@ export const authLogin = (email, password) => dispatch => {
             dispatch(authFail(err));
         });
 };
-
+export const getCountryUtil = payload => ({
+    type: actionTypes.GET_COUNTRY,
+    payload
+});
+export const getAmount = payload => ({
+    type: actionTypes.GET_AMOUNT,
+    payload
+});
+export const setAmount = (amount) => dispatch => {
+    dispatch(getAmount(amount));
+};
 export const authSignup = (username, email, password1, password2) => dispatch => {
     dispatch(authStart());
     axios
@@ -68,6 +86,31 @@ export const authSignup = (username, email, password1, password2) => dispatch =>
         .catch(err => {
             dispatch(authFail(err));
         });
+};
+
+export const getRates = () => {
+    axios
+        .get(
+            'https://openexchangerates.org/api/latest.json?app_id=cf5b21d711aa406a84eb3d9d688559af&base=USD'
+        )
+        .then(response => response.data.rates)
+        .catch(err => err);
+};
+export const getCountry = (amount) => dispatch => {
+
+    axios.get("https://ipinfo.io/json?token=b65f4636b1dd6c").then(
+        (response) => response.data
+    ).then(
+        (jsonResponse) => {
+
+            dispatch(getCountryUtil(jsonResponse.country));
+            const currData = getAllInfoByISO(jsonResponse.country).currency;
+            const rates = getRates();
+            dispatch(setAmount(Math.round(rates[currData.currency] * amount)));
+        }
+    ).catch(err => {
+        dispatch(authFail(err));
+    });
 };
 
 export const authCheckState = () => dispatch => {

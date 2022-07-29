@@ -11,13 +11,13 @@ function CarouselPage() {
     {
       image_source: carouselExciteImageOne,
       name: 'Random Name #1',
-      description: ''
+      description: 'R E D E F I N I N G'
     },
     {
       image_source: carouselImageTwo,
       name: 'Random Name #2',
       description:
-        'Encounter a new world of technology\n A universe where we are the greatest\n With State of the Art Rockets and Space Ships'
+        'Encounter a new world of technology A universe where we are the greatest With State of the Art Rockets and Space Ships'
     },
     {
       image_source: carouselImageThree,
@@ -45,7 +45,7 @@ function Item({ item }) {
         alt="space-carousel"
       />
 
-      <p className="centered text-bold absolute bg-gray-500 p-4 text-white opacity-70">
+      <p className="centered text-bold absolute p-4 text-white">
         {item.description}
       </p>
     </Paper>

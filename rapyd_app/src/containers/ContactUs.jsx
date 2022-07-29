@@ -1,4 +1,4 @@
-import { Typography, Paper, Grid, TextField, Button } from '@mui/material';
+import { Typography, Card, Grid, TextField, Button } from '@mui/material';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 
@@ -26,8 +26,17 @@ function ContactUs() {
     }
   });
   return (
-    <div className="CheckoutForm">
-      <Paper style={{ margin: '4em 4em', padding: '20px 5px' }}>
+    <div className="CheckoutForm m-8">
+      <Typography
+        gutterBottom
+        variant="h4"
+        textAlign="center"
+        color="white"
+        sx={{ marginTop: '8em 4em', padding: '20px 5px' }}
+      >
+        How Can we Help?
+      </Typography>
+      <Card>
         {sent ? (
           <div
             id="form-message-success"
@@ -36,9 +45,7 @@ function ContactUs() {
             Your message was sent successfully, thank you!
           </div>
         ) : null}
-        <Typography gutterBottom variant="h3" textAlign="center">
-          Enter the following details to Contact Us
-        </Typography>
+
         <form onSubmit={formik.handleSubmit}>
           <Grid container>
             <TextField
@@ -111,7 +118,7 @@ function ContactUs() {
             </Button>
           </Grid>
         </form>
-      </Paper>
+      </Card>
     </div>
   );
 }

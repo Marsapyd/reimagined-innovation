@@ -1,10 +1,13 @@
 import * as actionTypes from "../actions/actionTypes";
 import { updateObject } from "../utility";
 
+
 const initialState = {
     token: null,
     error: null,
-    loading: false
+    loading: false,
+    country: '',
+    amount: 150000
 };
 
 const authStart = (state) => updateObject(state, {
@@ -27,6 +30,12 @@ const authLogout = (state) => updateObject(state, {
     token: null
 });
 
+const getCountry = (state, action) => updateObject(state, {
+    country: action.payload
+});
+const getAmount = (state, action) => updateObject(state, {
+    amount: action.payload
+});
 // eslint-disable-next-line default-param-last
 const reducer = (state = initialState, action) => {
     switch (action.type) {
@@ -38,6 +47,10 @@ const reducer = (state = initialState, action) => {
             return authFail(state, action);
         case actionTypes.AUTH_LOGOUT:
             return authLogout(state, action);
+        case actionTypes.GET_COUNTRY:
+            return getCountry(state, action);
+        case actionTypes.GET_AMOUNT:
+            return getAmount(state, action);
         default:
             return state;
     }

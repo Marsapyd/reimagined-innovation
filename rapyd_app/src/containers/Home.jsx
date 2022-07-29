@@ -12,6 +12,7 @@ import { Button, Typography } from '@mui/material';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import CarouselPage from '../components/Carousel';
 import carouselExciteImageThree from '../assets/images/space-excite-three.png';
 import CountdownTimer from '../components/CountdownTimer';
@@ -65,81 +66,55 @@ ResponsiveContainer.propTypes = {
 
 const HomepageLayout = () => {
   const token = useSelector(state => state.auth.token);
-  const issueIban = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    };
-    axios
-      .post(
-        'http://127.0.0.1:8001/catalog/api/payment/',
-        {
-          country: 'Germany',
-          currency: 'EUR'
-        },
-        config
-      )
-      .then(res => {
-        // eslint-disable-next-line no-console
-        console.log(res);
-      })
-      .catch(err => {
-        console.log('I was here');
-        console.log(err);
-      });
-  };
 
   return (
     <ResponsiveContainer>
+      <Segment vertical>
+        <CarouselPage />
+      </Segment>
       <Segment
         style={{ padding: '2em 0em', backgroundColor: 'black' }}
         vertical
       >
-        <Segment vertical>
-          <CarouselPage />
-        </Segment>
-        <Segment
-          style={{ padding: '2em 0em', backgroundColor: 'black' }}
-          vertical
-        >
-          <Grid container stackable verticalAlign="middle">
-            <div className="m-8 m-auto flex w-full flex-1 text-center">
-              <Typography variant="h2" color="white">
-                Does it surprise you that the earth is round? Come Explore a
-                good time in space to be convinced
-              </Typography>
-            </div>
-            <div className="bg-black">
-              <img src={carouselExciteImageThree} alt="reinnovation" />
-            </div>
-          </Grid>
-        </Segment>
-        <Segment
-          style={{ padding: '2em 0em', backgroundColor: 'black' }}
-          vertical
-        >
-          <Grid container stackable verticalAlign="middle">
-            <CountdownTimer countdownTimestampMs={1660683442000} />
-          </Grid>
-        </Segment>
-        <Segment
-          style={{ padding: '2em 0em', backgroundColor: 'black' }}
-          vertical
-        >
-          <Grid container stackable verticalAlign="middle">
-            <div className="m-8 m-auto flex w-full flex-1 text-center">
-              <Button
-                variant="contained"
-                color="secondary"
-                size="large"
-                className="flex-1 items-center justify-center self-center"
-              >
+        <Grid container stackable verticalAlign="middle">
+          <div className="m-8 m-auto flex w-full flex-1 text-center">
+            <Typography variant="h2" color="white">
+              Does it surprise you that the earth is round? Come Explore a good
+              time in space to be convinced
+            </Typography>
+          </div>
+          <div className="bg-black">
+            <img src={carouselExciteImageThree} alt="reinnovation" />
+          </div>
+        </Grid>
+      </Segment>
+      <Segment
+        style={{ padding: '2em 0em', backgroundColor: 'black' }}
+        vertical
+      >
+        <Grid container stackable verticalAlign="middle">
+          <CountdownTimer countdownTimestampMs={1660683442000} />
+        </Grid>
+      </Segment>
+      <Segment
+        style={{ padding: '2em 0em', backgroundColor: 'black' }}
+        vertical
+      >
+        <Grid container stackable verticalAlign="middle">
+          <div className="m-8 m-auto flex w-full flex-1 text-center">
+            <Button
+              variant="contained"
+              color="secondary"
+              size="large"
+              className="flex-1 items-center justify-center self-center"
+            >
+              {' '}
+              <Link to="/order/mars-ticket" style={{ color: 'white' }}>
                 Book your space vacation now
-              </Button>
-            </div>
-          </Grid>
-        </Segment>
+              </Link>
+            </Button>
+          </div>
+        </Grid>
       </Segment>
     </ResponsiveContainer>
   );

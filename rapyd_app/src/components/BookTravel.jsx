@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Typography,
   Card,
@@ -9,17 +9,52 @@ import {
   Box,
   TextField
 } from '@mui/material';
+import axios from 'axios';
 import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllInfoByISO } from 'iso-country-currency';
 import RedPlanet from '../assets/images/space-ticket-image.png';
+import { setAmount } from '../store/actions/auth';
+import { numberWithCommas } from './utils';
 
 function BookSpaceTravel() {
-  const [tickets, seTickets] = useState(0);
+  const navigate = useNavigate();
+  const amount = useSelector(state => state.auth.amount);
+  const dispatch = useDispatch();
+  const country = useSelector(state => state.auth.country);
+  const [currency, setCurrency] = useState('');
+  const [rates, setRates] = useState([]);
+  const baseAmount = 150000;
+  useEffect(() => {
+    axios
+      .get(
+        'https://openexchangerates.org/api/latest.json?app_id=cf5b21d711aa406a84eb3d9d688559af&base=USD'
+      )
+      .then(response => {
+        setRates(response.data.rates);
+      });
+  }, []);
+  useEffect(() => {
+    if (country) {
+      const currData = getAllInfoByISO(country);
+      setCurrency(currData.symbol);
+      dispatch(setAmount(Math.round(rates[currData.currency] * baseAmount)));
+    } else {
+      setCurrency(getAllInfoByISO('US').symbol);
+    }
+  }, [country, rates, baseAmount, dispatch]);
   const formik = useFormik({
     initialValues: {
-      ticketQuantiy: 0
+      ticketQuantity: 1
     },
-    onSubmit: values => {
-      console.log(JSON.stringify(values));
+    onSubmit: ({ ticketQuantity }) => {
+      const state = {
+        amount: amount * ticketQuantity,
+        ticketQuantity,
+        itemName: 'space-ticket-to-mars'
+      };
+      navigate('/checkout', { state });
     }
   });
   return (
@@ -32,14 +67,7 @@ function BookSpaceTravel() {
         }}
       >
         <Grid container spacing={1} columns={2}>
-          <Grid
-            divided
-            item
-            xs={1}
-            inverted
-            stackable
-            style={{ marginBottom: '1em', color: 'white' }}
-          >
+          <Grid item xs={1} style={{ marginBottom: '1em', color: 'white' }}>
             <CardHeader
               title={
                 <Typography gutterBottom variant="h5">
@@ -62,14 +90,7 @@ function BookSpaceTravel() {
               />
             </CardContent>
           </Grid>
-          <Grid
-            divided
-            item
-            xs={1}
-            inverted
-            stackable
-            style={{ marginBottom: '1em', color: 'white' }}
-          >
+          <Grid item xs={1} style={{ marginBottom: '1em', color: 'white' }}>
             <CardHeader
               title={
                 <Box className="flex flex-row">
@@ -133,63 +154,67 @@ function BookSpaceTravel() {
                     variant="h4"
                     className="text-gray-200"
                   >
-                    $150, 000 <span className="text-lg">per person</span>
+                    {currency}
+                    {numberWithCommas(amount)}
+                    <span className="text-lg"> per person</span>
                   </Typography>
                 </Box>
               </Box>
             </CardContent>
             <CardContent>
-              <Box className="flex flex-row items-center justify-between">
-                <Box className="flex flex-col">
+              <form onSubmit={formik.handleSubmit}>
+                <Box className="items-between flex flex-col items-center">
                   <TextField
                     label="Ticket quantity"
+                    InputLabelProps={{
+                      style: {
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        borderColor: 'green',
+                        border: '3em',
+                        overflow: 'hidden',
+                        width: '100%',
+                        color: 'green',
+                        fontSize: 20
+                      }
+                    }}
                     placeholder="How many tickets"
                     variant="filled"
-                    name="ticket_quantity"
-                    value={formik.values.ticket_quantity}
+                    type="number"
+                    name="ticketQuantity"
+                    value={formik.values.ticketQuantity}
                     onChange={formik.handleChange}
                     fullWidth
                     required
-                    className="bg-red"
+                    className="top-1.5 border-red-700"
                     color="secondary"
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                    sx={{
-                      backgroundColor: 'redxs'
+                    inputProps={{
+                      inputMode: 'numeric',
+                      pattern: '[0-9]*',
+                      style: {
+                        textOverflow: 'ellipsis',
+                        borderColor: 'green !important',
+                        border: '3em',
+                        whiteSpace: 'nowrap',
+                        width: '100%',
+                        color: 'green',
+                        fontSize: 30
+                      }
                     }}
                   />
-                </Box>
-                <Box className="flex flex-col">
-                  <Typography
-                    gutterBottom
-                    variant="h7"
-                    className="text-gray-500"
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="secondary"
+                    align="center"
+                    fullWidth
+                    sx={{ marginTop: '2em' }}
                   >
-                    Price
-                  </Typography>
-                  <Typography
-                    color="orange"
-                    gutterBottom
-                    variant="h4"
-                    className="text-gray-200"
-                  >
-                    $150, 000 <span className="text-lg">per person</span>
-                  </Typography>
+                    Add To Cart
+                  </Button>
                 </Box>
-              </Box>
+              </form>
             </CardContent>
-
-            <Grid xs={12} item>
-              <Button
-                type="submit"
-                variant="contained"
-                color="secondary"
-                align="center"
-                fullWidth
-                onClick={() => console.log('Submitted')}
-              >
-                Submit
-              </Button>
-            </Grid>
           </Grid>
         </Grid>
       </Card>
